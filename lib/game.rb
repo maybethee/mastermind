@@ -6,6 +6,8 @@ class Game
     @current_guess = nil
     @correct_digit_and_location = 0
     @correct_digit = 0
+    @turn_count = 0
+    @game_over_statement = ''
   end
 
   def play
@@ -13,17 +15,31 @@ class Game
 
     get_secret_code
 
-    # @game_mode_length.times do 
-    get_guess
-    compare_with_secret_code
-    # end
+    @game_mode_length.times do
+      @turn_count += 1 
+      get_guess
+      compare_with_secret_code
 
+      if @current_guess == @secret_code
+        @game_over_statement = 'you win!'
+        break
+      # break before showing clues on final turn
+      elsif @current_guess != @secret_code && @turn_count == @game_mode_length
+        @game_over_statement = 'game over, better luck next time!'
+        break
+      end
+
+      # if guess is not correct, give hints (updated in compare method)
+      puts "correct digit and location: #{@correct_digit_and_location}"
+      puts "digit in code: #{@correct_digit}"
+    end
+    puts @game_over_statement
   end
 
   def get_secret_code
     puts "please enter a secret code:"
     @secret_code = player_input
-    puts 'thank you!'
+    puts 'great!'
   end
 
   def get_guess
@@ -35,30 +51,42 @@ class Game
     # create hash of counts to decrement from
     digit_counts = @secret_code.tally
 
-    puts "performing first pass"
+    compare_first_pass(digit_counts)
+    compare_second_pass(digit_counts)
+  end
+
+  def compare_first_pass(count_hash)
+    correct_digit_and_location_hint = 0
+
     # first pass: correct positions
     @current_guess.each_with_index do |digit, id|
       if digit == @secret_code[id]
-        @correct_digit_and_location += 1
+        correct_digit_and_location_hint += 1
         # decrement from freq. count to avoid overtallying in second pass
-        digit_counts[digit] -= 1
+        count_hash[digit] -= 1
       end
     end
+    @correct_digit_and_location = correct_digit_and_location_hint
+  end
 
-    # second pass: digit included 
-    puts "performing second pass"
+  def compare_second_pass(count_hash)
+    correct_digit_hint = 0
+
+    # second pass: digit included
     @current_guess.each do |digit|
 
       # skip if number freq. is 0 (already been counted)
-      if @secret_code.include?(digit) && digit_counts[digit] > 0
-        @correct_digit += 1
+      if @secret_code.include?(digit) && count_hash[digit] > 0
+        correct_digit_hint += 1
         # decrement from freq. count to avoid overtallying when checking previously evaluated positions
-        digit_counts[digit] -= 1
+        count_hash[digit] -= 1
       end
     end
+    @correct_digit = correct_digit_hint
+  end
 
-    puts "correct digit and location: #{@correct_digit_and_location}"
-    puts "digit in code: #{@correct_digit}"
+  def congratulate_winner
+    puts 'you win! play again?'
   end
 
   def player_input
