@@ -19,10 +19,13 @@ class Game
 
     @game_mode_length.times do
       @record.turn_count += 1 
+      
       get_guess
-      @record.update_current_guess(@current_guess)
       compare_with_secret_code
-      @record.update_hints(@correct_digit_and_location, @correct_digit)
+      
+      @record.update_round(@current_guess, @correct_digit_and_location, @correct_digit)
+
+      @record.print_record
 
       if @current_guess == @secret_code
         @game_over_statement = 'you win!'
@@ -33,8 +36,6 @@ class Game
         break
       end
 
-      # if guess is not correct, give hints (updated in compare method)
-      @record.print_record
     end
     puts @game_over_statement
   end
@@ -86,10 +87,6 @@ class Game
       end
     end
     @correct_digit = correct_digit_hint
-  end
-
-  def congratulate_winner
-    puts 'you win! play again?'
   end
 
   def player_input
