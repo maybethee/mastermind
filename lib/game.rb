@@ -27,14 +27,9 @@ class Game
 
       @record.print_record
 
-      if @current_guess == @secret_code
-        @game_over_statement = 'you win!'
-        break
-      # break before showing clues on final turn
-      elsif @current_guess != @secret_code && @record.turn_count == @game_mode_length
-        @game_over_statement = 'game over, better luck next time!'
-        break
-      end
+      game_over_check
+
+      break if game_over_check == :break
 
     end
     puts @game_over_statement
@@ -89,8 +84,18 @@ class Game
     @correct_digit = correct_digit_hint
   end
 
+  def game_over_check
+    if @current_guess == @secret_code
+      @game_over_statement = 'you win!'
+      return :break
+    # break before showing clues on final turn
+    elsif @current_guess != @secret_code && @record.turn_count == @game_mode_length
+      @game_over_statement = 'game over, better luck next time!'
+      return :break
+    end
+  end
+
   def player_input
-    # $stdout.flush
     loop do
       error_message = "Invalid input.\n\n"
       input = gets.chomp
