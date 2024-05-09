@@ -1,3 +1,5 @@
+require_relative 'record'
+
 class Game
   def initialize(game_mode_length, game_mode_max)
     @game_mode_length = game_mode_length
@@ -6,8 +8,8 @@ class Game
     @current_guess = nil
     @correct_digit_and_location = 0
     @correct_digit = 0
-    @turn_count = 0
     @game_over_statement = ''
+    @record = Record.new
   end
 
   def play
@@ -16,22 +18,23 @@ class Game
     get_secret_code
 
     @game_mode_length.times do
-      @turn_count += 1 
+      @record.turn_count += 1 
       get_guess
+      @record.update_current_guess(@current_guess)
       compare_with_secret_code
+      @record.update_hints(@correct_digit_and_location, @correct_digit)
 
       if @current_guess == @secret_code
         @game_over_statement = 'you win!'
         break
       # break before showing clues on final turn
-      elsif @current_guess != @secret_code && @turn_count == @game_mode_length
+      elsif @current_guess != @secret_code && @record.turn_count == @game_mode_length
         @game_over_statement = 'game over, better luck next time!'
         break
       end
 
       # if guess is not correct, give hints (updated in compare method)
-      puts "correct digit and location: #{@correct_digit_and_location}"
-      puts "digit in code: #{@correct_digit}"
+      @record.print_record
     end
     puts @game_over_statement
   end
