@@ -15,7 +15,7 @@ class Game
     generate_secret_code
 
     # reveal for debug
-    puts @secret_code.join('')
+    # puts @secret_code.join('')
 
     @game_mode_max.times do
       @record.turn_count += 1 
@@ -43,7 +43,7 @@ class Game
   end
 
   def get_guess
-    puts "guess the code (use digits from 1 to #{@game_mode_max}):"
+    puts "\nguess the code (use digits from 1 to #{@game_mode_max}):"
     @current_guess = player_input
   end
 
@@ -87,11 +87,11 @@ class Game
 
   def game_over_check
     if @current_guess == @secret_code
-      @game_over_statement = 'you win!'
+      @game_over_statement = "\nYou win!"
       return :break
     # break before showing clues on final turn
     elsif @current_guess != @secret_code && @record.turn_count == @game_mode_max
-      @game_over_statement = "game over :(\nthe secret code was #{@secret_code.join('')}\nplay again? (y/n)"
+      @game_over_statement = "\nGame over :(\nthe secret code was #{@secret_code.join('')}\n"
       return :break
     end
   end

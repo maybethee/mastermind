@@ -6,25 +6,42 @@ difficulty_levels = {
   'hard' => 8
 }
 
-def welcome_message
-  puts "\nWelcome to Code Breaker! Choose desired difficulty (length of code):\n\neasy   ★ (4 digits)\nmedium ★★ (6 digits)\nhard   ★★★ (8 digits)"
+def choose_difficulty
+  puts "\nChoose desired difficulty (length of code):\n\neasy   ★ (4 digits)\nmedium ★★ (6 digits)\nhard   ★★★ (8 digits)\n\n"
 end
 
-def player_input
+def get_desired_difficulty
   loop do
     error_message = "Please enter a valid difficulty level\n\n"
     input = gets.chomp
 
-    return input if valid?(input)
+    return input if %w[easy medium hard].include?(input.downcase)
 
     puts error_message
   end
 end
 
-def valid?(input)
-  %w[easy medium hard].include?(input)
+def play_again_choice
+  loop do
+    error_message = "Please enter either y or n\n\n"
+    input = gets.chomp
+
+    return input if %w[y n].include?(input.downcase)
+
+    puts error_message
+  end
 end
 
-welcome_message
-game = Game.new(difficulty_levels[player_input])
-game.play
+puts "\nWelcome to Code Breaker!"
+loop do
+  choose_difficulty
+  game = Game.new(difficulty_levels[get_desired_difficulty])
+  game.play
+  puts "\nPlay again? (y/n)"
+
+  case play_again_choice
+  when 'n' then break
+  when 'y' then redo
+  end
+end
+puts "\nThanks for playing! Goodbye~"

@@ -35,6 +35,7 @@ class Record
   end
 
   def print_record
+    puts
     puts FORMAT_STRING % ['turn number', 'current guess', 'digits in correct position', 'digits in secret code']
     puts "|-" + "-"*11 + "-|-" + "-"*15 + "-|-" + "-"*27 + "-|-" + "-"*21 + "-|"
     
