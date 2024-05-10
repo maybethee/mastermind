@@ -12,11 +12,9 @@ class Game
   end
 
   def play
-    puts 'welcome to mastermind!'
-
     generate_secret_code
 
-    # revealed for testing
+    # reveal for debug
     puts @secret_code.join('')
 
     @game_mode_max.times do
@@ -44,14 +42,8 @@ class Game
     end
   end
 
-  def get_secret_code
-    puts "please enter a secret code:"
-    @secret_code = player_input
-    puts 'great!'
-  end
-
   def get_guess
-    puts "guess the code:"
+    puts "guess the code (use digits from 1 to #{@game_mode_max}):"
     @current_guess = player_input
   end
 
@@ -106,7 +98,7 @@ class Game
 
   def player_input
     loop do
-      error_message = "Invalid input.\n\n"
+      error_message = "Invalid input.\nPlease enter #{@game_mode_max} digits between 1 and #{@game_mode_max}\n\n"
       input = gets.chomp
 
       return input.split(%r{\s*}).map(&:to_i) if valid?(input, @game_mode_max)
