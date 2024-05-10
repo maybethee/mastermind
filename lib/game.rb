@@ -1,8 +1,7 @@
 require_relative 'record'
 
 class Game
-  def initialize(game_mode_length, game_mode_max)
-    @game_mode_length = game_mode_length
+  def initialize(game_mode_max)
     @game_mode_max = game_mode_max
     @secret_code = nil
     @current_guess = nil
@@ -15,9 +14,12 @@ class Game
   def play
     puts 'welcome to mastermind!'
 
-    get_secret_code
+    generate_secret_code
 
-    @game_mode_length.times do
+    # revealed for testing
+    puts @secret_code.join('')
+
+    @game_mode_max.times do
       @record.turn_count += 1 
       
       get_guess
@@ -33,6 +35,13 @@ class Game
 
     end
     puts @game_over_statement
+  end
+
+  def generate_secret_code
+    @secret_code = []
+    @game_mode_max.times do 
+      @secret_code << (1..@game_mode_max).to_a.sample
+    end
   end
 
   def get_secret_code
@@ -89,8 +98,8 @@ class Game
       @game_over_statement = 'you win!'
       return :break
     # break before showing clues on final turn
-    elsif @current_guess != @secret_code && @record.turn_count == @game_mode_length
-      @game_over_statement = 'game over, better luck next time!'
+    elsif @current_guess != @secret_code && @record.turn_count == @game_mode_max
+      @game_over_statement = "game over :(\nthe secret code was #{@secret_code.join('')}\nplay again? (y/n)"
       return :break
     end
   end
@@ -100,14 +109,14 @@ class Game
       error_message = "Invalid input.\n\n"
       input = gets.chomp
 
-      return input.split(%r{\s*}).map(&:to_i) if valid?(input, @game_mode_length, @game_mode_max)
+      return input.split(%r{\s*}).map(&:to_i) if valid?(input, @game_mode_max)
 
       puts error_message
     end
   end
 
-  def valid?(input, length, max)
-    return false unless input.length == length
+  def valid?(input, max)
+    return false unless input.length == max
   
     input.each_char do |char|
       digit = char.to_i
